@@ -8,10 +8,11 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.findmycar.databinding.FragmentFirstBinding
+import com.example.findmycar.databinding.FragmentWelcomeBinding
 
-class TemplateFragment : Fragment() {
+class WelcomeFragment : Fragment() {
 
-    private var _binding: FragmentFirstBinding? = null
+    private var _binding: FragmentWelcomeBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,7 +29,7 @@ class TemplateFragment : Fragment() {
     ): View {
         Log.d(this::class.java.simpleName, "Start onCreateView")
 
-        _binding = FragmentFirstBinding.inflate(inflater, container, false)
+        _binding = FragmentWelcomeBinding.inflate(inflater, container, false)
 
         Log.d(this::class.java.simpleName, "End onCreateView")
         return binding.root
@@ -46,7 +47,7 @@ class TemplateFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.buttonFirst.setOnClickListener {
-            findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
+            findNavController().navigate(R.id.action_welcomeFragment_to_loginFragment)
         }
     }
 
