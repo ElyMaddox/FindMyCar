@@ -1,8 +1,8 @@
-package com.example.findmycar
+package com.example.findmycar.templates
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 
 class TemplateActivity : AppCompatActivity() {
 

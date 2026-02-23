@@ -1,4 +1,4 @@
-package com.example.findmycar
+package com.example.findmycar.templates
 
 import android.os.Bundle
 import android.util.Log
@@ -7,12 +7,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.example.findmycar.R
 import com.example.findmycar.databinding.FragmentFirstBinding
-import com.example.findmycar.databinding.FragmentLoginBinding
 
-class LoginFragment : Fragment() {
+class TemplateFragment : Fragment() {
 
-    private var _binding: FragmentLoginBinding? = null
+    private var _binding: FragmentFirstBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,7 +29,7 @@ class LoginFragment : Fragment() {
     ): View {
         Log.d(this::class.java.simpleName, "Start onCreateView")
 
-        _binding = FragmentLoginBinding.inflate(inflater, container, false)
+        _binding = FragmentFirstBinding.inflate(inflater, container, false)
 
         Log.d(this::class.java.simpleName, "End onCreateView")
         return binding.root
@@ -45,9 +45,9 @@ class LoginFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        // TODO: execute login stuff upon login click
-        binding.buttonFirst.setOnClickListener {
 
+        binding.buttonFirst.setOnClickListener {
+            findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
         }
     }
 

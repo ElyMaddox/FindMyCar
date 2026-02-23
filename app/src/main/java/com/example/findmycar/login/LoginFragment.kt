@@ -1,4 +1,4 @@
-package com.example.findmycar
+package com.example.findmycar.login
 
 import android.os.Bundle
 import android.util.Log
@@ -6,13 +6,21 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
-import com.example.findmycar.databinding.FragmentFirstBinding
+import com.example.findmycar.databinding.FragmentLoginBinding
+import kotlinx.coroutines.launch
+import com.example.findmycar.R
 
-class TemplateFragment : Fragment() {
+class LoginFragment : Fragment() {
 
-    private var _binding: FragmentFirstBinding? = null
+    private var _binding: FragmentLoginBinding? = null
     private val binding get() = _binding!!
+
+    private val viewModel: LoginViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(this::class.java.simpleName, "Start onCreate")
@@ -28,7 +36,7 @@ class TemplateFragment : Fragment() {
     ): View {
         Log.d(this::class.java.simpleName, "Start onCreateView")
 
-        _binding = FragmentFirstBinding.inflate(inflater, container, false)
+        _binding = FragmentLoginBinding.inflate(inflater, container, false)
 
         Log.d(this::class.java.simpleName, "End onCreateView")
         return binding.root
@@ -44,9 +52,33 @@ class TemplateFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        // TODO: execute login stuff upon login click
+        binding.buttonLogin.setOnClickListener {
+            Log.d(this::class.java.simpleName, "Login button clicked")
+            viewModel.performLogin(
+                binding.editTextUsername.text,
+                binding.editTextPassword.text
+            )
+        }
 
-        binding.buttonFirst.setOnClickListener {
-            findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
+        // Keep track of state so we know when to move on from login screen. Monitors stuff
+        // from the loginViewModel
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uiState.collect { state ->
+                    if (state.navigateToNextScreen) {
+                        // Perform the actual navigation
+                        findNavController().navigate(R.id.action_loginFragment_to_welcomeFragment)
+
+                        // Tell the ViewModel we've navigated so it doesn't trigger again
+                        viewModel.onNavigationComplete()
+                    }
+
+                    state.errorMessage?.let {
+                        viewModel.onErrorMessageShown()
+                    }
+                }
+            }
         }
     }
 

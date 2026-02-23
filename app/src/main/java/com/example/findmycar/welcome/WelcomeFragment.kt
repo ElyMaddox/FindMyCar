@@ -1,4 +1,4 @@
-package com.example.findmycar
+package com.example.findmycar.welcome
 
 import android.os.Bundle
 import android.util.Log
@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import com.example.findmycar.databinding.FragmentFirstBinding
+import com.example.findmycar.R
 import com.example.findmycar.databinding.FragmentWelcomeBinding
 
 class WelcomeFragment : Fragment() {
