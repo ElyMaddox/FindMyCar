@@ -1,6 +1,7 @@
 package com.example.findmycar
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -19,14 +20,67 @@ class SecondFragment : Fragment() {
     // onDestroyView.
     private val binding get() = _binding!!
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        Log.d(this::class.java.simpleName, "Start onCreate")
+        super.onCreate(savedInstanceState)
+
+        Log.d(this::class.java.simpleName, "End onCreate")
+    }
+
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        Log.d(this::class.java.simpleName, "Start onCreateView")
 
         _binding = FragmentSecondBinding.inflate(inflater, container, false)
-        return binding.root
 
+        Log.d(this::class.java.simpleName, "End onCreateView")
+        return binding.root
+    }
+
+    override fun onStart() {
+        Log.d(this::class.java.simpleName, "Start onStart")
+        super.onStart()
+
+        Log.d(this::class.java.simpleName, "End onStart")
+    }
+
+    override fun onResume() {
+        Log.d(this::class.java.simpleName, "Start onResume")
+        super.onResume()
+
+        Log.d(this::class.java.simpleName, "End onResume")
+    }
+
+    override fun onPause() {
+        Log.d(this::class.java.simpleName, "Start onPause")
+        super.onPause()
+
+        Log.d(this::class.java.simpleName, "End onPause")
+    }
+
+    override fun onStop() {
+        Log.d(this::class.java.simpleName, "Start onStop")
+        super.onStop()
+
+        Log.d(this::class.java.simpleName, "End onStop")
+    }
+
+    override fun onDestroyView() {
+        Log.d(this::class.java.simpleName, "Start onDestroyView")
+        super.onDestroyView()
+        _binding = null
+
+        Log.d(this::class.java.simpleName, "End onDestroyView")
+    }
+
+    override fun onDestroy() {
+        Log.d(this::class.java.simpleName, "Start onDestroy")
+        super.onDestroy()
+
+        Log.d(this::class.java.simpleName, "End onDestroy")
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -37,8 +91,4 @@ class SecondFragment : Fragment() {
         }
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
 }

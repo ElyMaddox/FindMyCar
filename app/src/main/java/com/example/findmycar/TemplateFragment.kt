@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
 import com.example.findmycar.databinding.FragmentFirstBinding
 
 class TemplateFragment : Fragment() {
@@ -32,14 +31,6 @@ class TemplateFragment : Fragment() {
 
         Log.d(this::class.java.simpleName, "End onCreateView")
         return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        binding.buttonFirst.setOnClickListener {
-            findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
-        }
     }
 
     override fun onStart() {
