@@ -9,7 +9,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.findmycar.R
-import com.example.findmycar.databinding.FragmentFirstBinding
 import com.example.findmycar.databinding.FragmentProfileBinding
 import com.example.findmycar.login.LoginViewModel
 import kotlin.getValue
