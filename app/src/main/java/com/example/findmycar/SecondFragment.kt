@@ -21,10 +21,10 @@ class SecondFragment : Fragment() {
     private val binding get() = _binding!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        Log.d(this::class.java.simpleName, "Start onCreate")
+        Log.d(javaClass.simpleName, "Start onCreate")
         super.onCreate(savedInstanceState)
 
-        Log.d(this::class.java.simpleName, "End onCreate")
+        Log.d(javaClass.simpleName, "End onCreate")
     }
 
     override fun onCreateView(
@@ -32,55 +32,55 @@ class SecondFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        Log.d(this::class.java.simpleName, "Start onCreateView")
+        Log.d(javaClass.simpleName, "Start onCreateView")
 
         _binding = FragmentSecondBinding.inflate(inflater, container, false)
 
-        Log.d(this::class.java.simpleName, "End onCreateView")
+        Log.d(javaClass.simpleName, "End onCreateView")
         return binding.root
     }
 
     override fun onStart() {
-        Log.d(this::class.java.simpleName, "Start onStart")
+        Log.d(javaClass.simpleName, "Start onStart")
         super.onStart()
 
-        Log.d(this::class.java.simpleName, "End onStart")
+        Log.d(javaClass.simpleName, "End onStart")
     }
 
     override fun onResume() {
-        Log.d(this::class.java.simpleName, "Start onResume")
+        Log.d(javaClass.simpleName, "Start onResume")
         super.onResume()
 
-        Log.d(this::class.java.simpleName, "End onResume")
+        Log.d(javaClass.simpleName, "End onResume")
     }
 
     override fun onPause() {
-        Log.d(this::class.java.simpleName, "Start onPause")
+        Log.d(javaClass.simpleName, "Start onPause")
         super.onPause()
 
-        Log.d(this::class.java.simpleName, "End onPause")
+        Log.d(javaClass.simpleName, "End onPause")
     }
 
     override fun onStop() {
-        Log.d(this::class.java.simpleName, "Start onStop")
+        Log.d(javaClass.simpleName, "Start onStop")
         super.onStop()
 
-        Log.d(this::class.java.simpleName, "End onStop")
+        Log.d(javaClass.simpleName, "End onStop")
     }
 
     override fun onDestroyView() {
-        Log.d(this::class.java.simpleName, "Start onDestroyView")
+        Log.d(javaClass.simpleName, "Start onDestroyView")
         super.onDestroyView()
         _binding = null
 
-        Log.d(this::class.java.simpleName, "End onDestroyView")
+        Log.d(javaClass.simpleName, "End onDestroyView")
     }
 
     override fun onDestroy() {
-        Log.d(this::class.java.simpleName, "Start onDestroy")
+        Log.d(javaClass.simpleName, "Start onDestroy")
         super.onDestroy()
 
-        Log.d(this::class.java.simpleName, "End onDestroy")
+        Log.d(javaClass.simpleName, "End onDestroy")
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

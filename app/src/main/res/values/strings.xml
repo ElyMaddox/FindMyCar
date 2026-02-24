@@ -8,9 +8,10 @@
     <string name="previous">Previous</string>
 
     <string name="login_title">Login</string>
-    <string name="username_hint">Username</string>
+    <string name="username_hint">Email</string>
     <string name="password_hint">Password</string>
     <string name="login_button">Login</string>
+    <string name="signup_button">Create Account</string>
 
     <string name="lorem_ipsum">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam in scelerisque sem. Mauris
@@ -37,15 +38,6 @@
         non lorem. Nam mollis ipsum quis auctor varius. Quisque elementum eu libero sed commodo. In
         eros nisl, imperdiet vel imperdiet et, scelerisque a mauris. Pellentesque varius ex nunc,
         quis imperdiet eros placerat ac. Duis finibus orci et est auctor tincidunt. Sed non viverra
-        ipsum. Nunc quis augue egestas, cursus lorem at, molestie sem. Morbi a consectetur ipsum, a
-        placerat diam. Etiam vulputate dignissim convallis. Integer faucibus mauris sit amet finibus
-        convallis.\n\n
-        Phasellus in aliquet mi. Pellentesque habitant morbi tristique senectus et netus et
-        malesuada fames ac turpis egestas. In volutpat arcu ut felis sagittis, in finibus massa
-        gravida. Pellentesque id tellus orci. Integer dictum, lorem sed efficitur ullamcorper,
-        libero justo consectetur ipsum, in mollis nisl ex sed nisl. Donec maximus ullamcorper
-        sodales. Praesent bibendum rhoncus tellus nec feugiat. In a ornare nulla. Donec rhoncus
-        libero vel nunc consequat, quis tincidunt nisl eleifend. Cras bibendum enim a justo luctus
-        vestibulum. Fusce dictum libero quis erat maximus, vitae volutpat diam dignissim.
+        ipsum. Nunc root@FindMyCar:~/AndroidStudioProjects/FindMyCar# 
     </string>
 </resources>
