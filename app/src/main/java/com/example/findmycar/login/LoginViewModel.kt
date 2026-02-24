@@ -78,6 +78,7 @@ class LoginViewModel : ViewModel() {
 
         viewModelScope.launch {
             try {
+                Log.d("LoginViewModel", "Attempting to sign up with email: $emailString")
                 supabase.auth.signUpWith(
                     provider = Email,
                     redirectUrl = "findmycar://login-callback"

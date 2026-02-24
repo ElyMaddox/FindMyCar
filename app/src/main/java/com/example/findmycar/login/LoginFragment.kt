@@ -5,7 +5,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -25,17 +24,24 @@ class LoginFragment : Fragment() {
 
     private val viewModel: LoginViewModel by viewModels()
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        Log.d("LoginFragment", "Start onCreate")
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        Log.d("LoginFragment", "Start onCreateView")
         _binding = FragmentLoginBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        Log.d("LoginFragment", "Start onViewCreated")
 
         binding.buttonLogin.setOnClickListener {
             viewModel.performLogin(
@@ -82,8 +88,41 @@ class LoginFragment : Fragment() {
         }
     }
 
+    override fun onStart() {
+        Log.d("LoginFragment", "Start onStart")
+        super.onStart()
+        Log.d("LoginFragment", "End onStart")
+    }
+
+    override fun onResume() {
+        Log.d("LoginFragment", "Start onResume")
+        super.onResume()
+        Log.d("LoginFragment", "End onResume")
+    }
+
+    override fun onPause() {
+        Log.d("LoginFragment", "Start onPause")
+        super.onPause()
+        Log.d("LoginFragment", "End onPause")
+    }
+
+    override fun onStop() {
+        Log.d("LoginFragment", "Start onStop")
+        super.onStop()
+        Log.d("LoginFragment", "End onStop")
+    }
+
     override fun onDestroyView() {
+        Log.d("LoginFragment", "Start onDestroyView")
         super.onDestroyView()
         _binding = null
+        Log.d("LoginFragment", "End onDestroyView")
+
+    }
+
+    override fun onDestroy() {
+        Log.d("LoginFragment", "Start onDestroy")
+        super.onDestroy()
+        Log.d("LoginFragment", "End onDestroy")
     }
 }

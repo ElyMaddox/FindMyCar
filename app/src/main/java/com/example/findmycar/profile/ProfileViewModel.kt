@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
+// Use isLoading for whenever fetching or updating data from/to supabase
 data class ProfileUiState(
     val isLoading: Boolean = false,
 )
