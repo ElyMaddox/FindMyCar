@@ -4,6 +4,7 @@
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
     <string name="second_fragment_label">Second Fragment</string>
+    <string name="profile_fragment_label">Profile</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>
 
@@ -12,6 +13,11 @@
     <string name="password_hint">Password</string>
     <string name="login_button">Login</string>
     <string name="signup_button">Create Account</string>
+
+    <string name="profile_title">Profile</string>
+    <string name="full_name_hint">Full Name</string>
+    <string name="save_profile_button">Save Profile</string>
+    <string name="back_to_welcome_button">Sign Out</string>
 
     <string name="lorem_ipsum">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam in scelerisque sem. Mauris

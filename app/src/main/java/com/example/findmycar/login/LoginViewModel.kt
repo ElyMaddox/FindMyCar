@@ -49,8 +49,17 @@ class LoginViewModel : ViewModel() {
                 }
             } catch (e: Exception) {
                 Log.e("LoginViewModel", "Login failed", e)
-                _uiState.update { 
-                    it.copy(isLoading = false, errorMessage = e.message ?: "Login failed. Please try again.") 
+                _uiState.update {
+                    Log.e("LoginViewModel", "Login failed", e)
+
+                    // Give useful error message to user when login fails
+                    val msg = when {
+                        e is SecurityException -> "Permission denied: Missing INTERNET permission in Manifest."
+                        e.message?.contains("Unable to resolve host") == true -> "No internet connection."
+                        else -> e.message ?: "Login failed. Please try again."
+                    }
+
+                    it.copy(isLoading = false, msg)
                 }
             }
         }

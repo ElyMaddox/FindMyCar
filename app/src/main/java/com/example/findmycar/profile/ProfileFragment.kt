@@ -1,4 +1,4 @@
-package com.example.findmycar.welcome
+package com.example.findmycar.profile
 
 import android.os.Bundle
 import android.util.Log
@@ -6,14 +6,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.findmycar.R
-import com.example.findmycar.databinding.FragmentWelcomeBinding
+import com.example.findmycar.databinding.FragmentFirstBinding
+import com.example.findmycar.databinding.FragmentProfileBinding
+import com.example.findmycar.login.LoginViewModel
+import kotlin.getValue
 
-class WelcomeFragment : Fragment() {
+class ProfileFragment : Fragment() {
 
-    private var _binding: FragmentWelcomeBinding? = null
+    private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
+
+    private val viewModel: ProfileViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(javaClass.simpleName, "Start onCreate")
@@ -29,7 +35,7 @@ class WelcomeFragment : Fragment() {
     ): View {
         Log.d(javaClass.simpleName, "Start onCreateView")
 
-        _binding = FragmentWelcomeBinding.inflate(inflater, container, false)
+        _binding = FragmentProfileBinding.inflate(inflater, container, false)
 
         Log.d(javaClass.simpleName, "End onCreateView")
         return binding.root
@@ -44,11 +50,18 @@ class WelcomeFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        Log.d(javaClass.simpleName, "Start onViewCreated")
         super.onViewCreated(view, savedInstanceState)
 
-        binding.buttonFirst.setOnClickListener {
-            findNavController().navigate(R.id.action_welcomeFragment_to_loginFragment)
+        binding.buttonSaveProfile.setOnClickListener {
+            viewModel.saveProfile(binding.editTextFullName.text)
         }
+
+        binding.buttonBackToWelcome.setOnClickListener {
+            findNavController().navigate(R.id.action_profileFragment_to_loginFragment)
+        }
+
+        Log.d(javaClass.simpleName, "End onViewCreated")
     }
 
     override fun onStart() {
