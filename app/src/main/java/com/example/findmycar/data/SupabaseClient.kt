@@ -6,7 +6,6 @@ import io.github.jan.supabase.postgrest.Postgrest
 
 /**
  * Shared instance of the Supabase client.
- * Replace the placeholders with your actual Supabase URL and Anon Key.
  *
  * Supabase said this API key is publishable, we jus need RLS on the database.
  * Might move these to .properties later, but this is fine for now.
