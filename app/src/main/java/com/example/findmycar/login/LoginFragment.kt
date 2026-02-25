@@ -68,7 +68,7 @@ class LoginFragment : Fragment() {
 
                     // Handle Navigation
                     if (state.navigateToNextScreen) {
-                        findNavController().navigate(R.id.action_loginFragment_to_profileFragment)
+                        findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
                         viewModel.onNavigationComplete()
                     }
 
