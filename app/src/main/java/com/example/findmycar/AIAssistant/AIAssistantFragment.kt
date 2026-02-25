@@ -6,15 +6,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.findmycar.R
 import com.example.findmycar.databinding.FragmentAiAssistantBinding
 import com.example.findmycar.databinding.FragmentLoginBinding
+import com.example.findmycar.login.LoginViewModel
+import kotlin.getValue
 
 class AIAssistantFragment : Fragment() {
 
     private var _binding: FragmentAiAssistantBinding? = null
     private val binding get() = _binding!!
+
+    private val viewModel: AiAssistantViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(javaClass.simpleName, "Start onCreate")
@@ -47,9 +52,10 @@ class AIAssistantFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-//        binding.buttonFirst.setOnClickListener {
-//            findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
-//        }
+        binding.buttonSend.setOnClickListener {
+            if(binding.editTextMessage.text != null)
+                viewModel.sendUserMessage(binding.editTextMessage.text.toString())
+        }
     }
 
     override fun onStart() {
