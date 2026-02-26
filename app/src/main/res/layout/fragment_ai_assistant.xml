@@ -19,7 +19,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:listitem="@layout/item_chat_message" />
+        tools:listitem="@layout/item_chat_user" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_input"
@@ -36,7 +36,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
-            android:hint="Ask the assistant..."
+            android:hint="@string/ai_hint"
             app:endIconMode="none"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/button_send"
@@ -55,7 +55,7 @@
             android:id="@+id/button_send"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:contentDescription="Send Message"
+            android:contentDescription="@string/send_message_content_description"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
