@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -53,6 +54,7 @@ dependencies {
     implementation(platform(libs.supabase.bom))
     implementation(libs.supabase.gotrue)
     implementation(libs.supabase.postgrest)
+    implementation(libs.supabase.functions)
     
     // Ktor 3.x (Required for Supabase 3.x)
     val ktor_version = "3.0.3"
