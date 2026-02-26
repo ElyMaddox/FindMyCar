@@ -1,10 +1,12 @@
 package com.example.findmycar.AIAssistant
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -44,6 +46,10 @@ class AIAssistantFragment : Fragment() {
             if (messageText.isNotBlank()) {
                 viewModel.sendUserMessage(messageText)
                 binding.editTextMessage.text?.clear()
+                
+                // Hide keyboard after sending
+                val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                imm.hideSoftInputFromWindow(view.windowToken, 0)
             }
         }
 
