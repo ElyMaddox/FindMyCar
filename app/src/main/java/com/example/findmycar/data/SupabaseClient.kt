@@ -2,6 +2,7 @@ package com.example.findmycar.data
 
 import io.github.jan.supabase.auth.Auth
 import io.github.jan.supabase.createSupabaseClient
+import io.github.jan.supabase.functions.Functions
 import io.github.jan.supabase.postgrest.Postgrest
 
 /**
@@ -17,4 +18,5 @@ val supabase = createSupabaseClient(
 ) {
     install(Auth)
     install(Postgrest)
+    install(Functions)
 }
