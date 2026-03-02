@@ -19,17 +19,27 @@ import kotlinx.coroutines.launch
 
 class AIAssistantFragment : Fragment() {
 
+    companion object {
+        private const val TAG = "AIAssistantFragment"
+    }
+
     private var _binding: FragmentAiAssistantBinding? = null
     private val binding get() = _binding!!
 
     private val viewModel: AiAssistantViewModel by viewModels()
     private val chatAdapter = ChatAdapter()
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        Log.d(TAG, "AIAssistantFragment - onCreate() called")
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        Log.d(TAG, "AIAssistantFragment - onCreateView() called")
         _binding = FragmentAiAssistantBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -46,7 +56,7 @@ class AIAssistantFragment : Fragment() {
             if (messageText.isNotBlank()) {
                 viewModel.sendUserMessage(messageText)
                 binding.editTextMessage.text?.clear()
-                
+
                 // Hide keyboard after sending
                 val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 imm.hideSoftInputFromWindow(view.windowToken, 0)
@@ -78,8 +88,34 @@ class AIAssistantFragment : Fragment() {
         }
     }
 
+    override fun onStart() {
+        super.onStart()
+        Log.d(TAG, "AIAssistantFragment - onStart() called")
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.d(TAG, "AIAssistantFragment - onResume() called")
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Log.d(TAG, "AIAssistantFragment - onPause() called")
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Log.d(TAG, "AIAssistantFragment - onStop() called")
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+        Log.d(TAG, "AIAssistantFragment - onDestroyView() called")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d(TAG, "AIAssistantFragment - onDestroy() called")
     }
 }

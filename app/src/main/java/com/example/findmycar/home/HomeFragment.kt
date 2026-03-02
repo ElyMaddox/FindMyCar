@@ -12,12 +12,16 @@ import com.example.findmycar.databinding.FragmentHomeBinding
 
 class HomeFragment : Fragment() {
 
+    companion object {
+        private const val TAG = "HomeFragment"
+    }
+
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.d(javaClass.simpleName, "Start onCreate")
+        Log.d(TAG, "HomeFragment - onCreate() called")
     }
 
     override fun onCreateView(
@@ -25,7 +29,7 @@ class HomeFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        Log.d(javaClass.simpleName, "Start onCreateView")
+        Log.d(TAG, "HomeFragment - onCreateView() called")
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -44,32 +48,32 @@ class HomeFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-        Log.d(javaClass.simpleName, "Start onStart")
+        Log.d(TAG, "HomeFragment - onStart() called")
     }
 
     override fun onResume() {
         super.onResume()
-        Log.d(javaClass.simpleName, "Start onResume")
+        Log.d(TAG, "HomeFragment - onResume() called")
     }
 
     override fun onPause() {
         super.onPause()
-        Log.d(javaClass.simpleName, "Start onPause")
+        Log.d(TAG, "HomeFragment - onPause() called")
     }
 
     override fun onStop() {
         super.onStop()
-        Log.d(javaClass.simpleName, "Start onStop")
+        Log.d(TAG, "HomeFragment - onStop() called")
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-        Log.d(javaClass.simpleName, "Start onDestroyView")
+        Log.d(TAG, "HomeFragment - onDestroyView() called")
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        Log.d(javaClass.simpleName, "Start onDestroy")
+        Log.d(TAG, "HomeFragment - onDestroy() called")
     }
 }

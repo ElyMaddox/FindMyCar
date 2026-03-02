@@ -14,13 +14,16 @@ import com.example.findmycar.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 
+    companion object {
+        private const val TAG = "MainActivity"
+    }
+
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        Log.d(this.localClassName, "Start onCreate")
+        Log.d(TAG, "MainActivity - onCreate() called")
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -30,43 +33,31 @@ class MainActivity : AppCompatActivity() {
         val navController = findNavController(R.id.nav_host_fragment_content_main)
         appBarConfiguration = AppBarConfiguration(navController.graph)
         setupActionBarWithNavController(navController, appBarConfiguration)
-
-        Log.d(this.localClassName, "End onCreate")
     }
 
     override fun onStart() {
-        Log.d(this.localClassName, "Start onStart")
         super.onStart()
-
-        Log.d(this.localClassName, "End onStart")
+        Log.d(TAG, "MainActivity - onStart() called")
     }
 
     override fun onResume() {
-        Log.d(this.localClassName, "Start onResume")
         super.onResume()
-
-        Log.d(this.localClassName, "End onResume")
+        Log.d(TAG, "MainActivity - onResume() called")
     }
 
     override fun onPause() {
-        Log.d(this.localClassName, "Start onPause")
         super.onPause()
-
-        Log.d(this.localClassName, "End onPause")
+        Log.d(TAG, "MainActivity - onPause() called")
     }
 
     override fun onStop() {
-        Log.d(this.localClassName, "Start onStop")
         super.onStop()
-
-        Log.d(this.localClassName, "End onStop")
+        Log.d(TAG, "MainActivity - onStop() called")
     }
 
     override fun onDestroy() {
-        Log.d(this.localClassName, "Start onDestroy")
         super.onDestroy()
-
-        Log.d(this.localClassName, "End onDestroy")
+        Log.d(TAG, "MainActivity - onDestroy() called")
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

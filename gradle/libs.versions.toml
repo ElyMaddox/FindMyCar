@@ -1,7 +1,7 @@
 [versions]
 
 android-gradle-plugin = "8.13.2"
-android-application = "8.13.2"
+android-application = "9.0.1"
 kotlin-android = "2.3.10"
 
 
