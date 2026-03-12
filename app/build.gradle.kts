@@ -1,7 +1,17 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.navigation.safeargs)
+}
+
+val properties = Properties().apply {
+    val propertiesFile = project.rootProject.file("gradle.properties")
+    if (propertiesFile.exists()) {
+        load(propertiesFile.inputStream())
+    }
 }
 
 android {
@@ -16,6 +26,10 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        // Inject Marketcheck credentials into BuildConfig
+        buildConfigField("String", "MARKETCHECK_API_KEY", "\"${properties.getProperty("MARKETCHECK_API_KEY")}\"")
+        buildConfigField("String", "MARKETCHECK_API_SECRET", "\"${properties.getProperty("MARKETCHECK_API_SECRET")}\"")
     }
 
     buildTypes {
@@ -33,6 +47,7 @@ android {
     }
     buildFeatures {
         viewBinding = true
+        buildConfig = true
     }
 }
 

@@ -42,4 +42,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/button_go_to_profile" />
 
+    <Button
+        android:id="@+id/button_car_view_test"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:padding="16dp"
+        android:text="Car View Test"
+        app:icon="@android:drawable/ic_menu_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button_go_to_ai" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,15 +1,17 @@
-package com.example.findmycar.AIAssistant
+package com.example.findmycar.aiassistant
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.findmycar.R
+import com.example.findmycar.data.MarketcheckListing
 
-class ChatAdapter : ListAdapter<ChatMessage, ChatAdapter.ChatViewHolder>(ChatDiffCallback()) {
+class ChatAdapter(private val onCarClick: (MarketcheckListing) -> Unit) : 
+    ListAdapter<ChatMessage, ChatAdapter.ChatViewHolder>(ChatDiffCallback()) {
 
     companion object {
         private const val VIEW_TYPE_USER = 1
@@ -27,22 +29,39 @@ class ChatAdapter : ListAdapter<ChatMessage, ChatAdapter.ChatViewHolder>(ChatDif
             R.layout.item_chat_ai
         }
         val view = LayoutInflater.from(parent.context).inflate(layout, parent, false)
-        return ChatViewHolder(view)
+        return ChatViewHolder(view, onCarClick)
     }
 
     override fun onBindViewHolder(holder: ChatViewHolder, position: Int) {
         holder.bind(getItem(position))
     }
 
-    class ChatViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class ChatViewHolder(
+        itemView: View, 
+        private val onCarClick: (MarketcheckListing) -> Unit
+    ) : RecyclerView.ViewHolder(itemView) {
+        
         private val messageBody: TextView = itemView.findViewById(R.id.textView_message_body)
+        private val recyclerViewCars: RecyclerView? = itemView.findViewById(R.id.recyclerView_cars)
 
         fun bind(message: ChatMessage) {
             messageBody.text = message.content
+            
+            if (recyclerViewCars != null) {
+                if (!message.carListings.isNullOrEmpty()) {
+                    recyclerViewCars.visibility = View.VISIBLE
+                    val carAdapter = CarCardAdapter(onCarClick)
+                    recyclerViewCars.layoutManager = LinearLayoutManager(itemView.context, LinearLayoutManager.HORIZONTAL, false)
+                    recyclerViewCars.adapter = carAdapter
+                    carAdapter.submitList(message.carListings)
+                } else {
+                    recyclerViewCars.visibility = View.GONE
+                }
+            }
         }
     }
 
-    class ChatDiffCallback : DiffUtil.ItemCallback<ChatMessage>() {
+    class ChatDiffCallback : androidx.recyclerview.widget.DiffUtil.ItemCallback<ChatMessage>() {
         override fun areItemsTheSame(oldItem: ChatMessage, newItem: ChatMessage): Boolean {
             return oldItem.timestamp == newItem.timestamp
         }

@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/loginFragment"
         android:name="com.example.findmycar.login.LoginFragment"
-        android:label="LoginFragment"
+        android:label="@string/login_title"
         tools:layout="@layout/fragment_login" >
         <action
             android:id="@+id/action_loginFragment_to_homeFragment"
@@ -28,6 +28,9 @@
         <action
             android:id="@+id/action_homeFragment_to_aiAssistantFragment"
             app:destination="@id/aiAssistantFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_carDetailsFragment"
+            app:destination="@id/carDetailsFragment" />
     </fragment>
 
     <fragment
@@ -44,8 +47,22 @@
 
     <fragment
         android:id="@+id/aiAssistantFragment"
-        android:name="com.example.findmycar.AIAssistant.AIAssistantFragment"
+        android:name="com.example.findmycar.aiassistant.AIAssistantFragment"
         android:label="AI Assistant"
-        tools:layout="@layout/fragment_ai_assistant" />
+        tools:layout="@layout/fragment_ai_assistant">
+        <action
+            android:id="@+id/action_aiAssistantFragment_to_carDetailsFragment"
+            app:destination="@id/carDetailsFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/carDetailsFragment"
+        android:name="com.example.findmycar.cardetails.CarDetailsFragment"
+        android:label="Car Details"
+        tools:layout="@layout/fragment_car_details">
+        <argument
+            android:name="carId"
+            app:argType="integer" />
+    </fragment>
 
 </navigation>

@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="4dp">
 
     <com.google.android.material.card.MaterialCardView
+        android:id="@+id/card_message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:cardBackgroundColor="@android:color/darker_gray"
@@ -20,9 +22,23 @@
             android:layout_height="wrap_content"
             android:maxWidth="260dp"
             android:padding="12dp"
-            android:text="AI message bubble"
-            android:textColor="@android:color/white" />
+            android:textColor="@android:color/white"
+            tools:text="AI message bubble" />
 
     </com.google.android.material.card.MaterialCardView>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView_cars"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/card_message"
+        tools:listitem="@layout/item_chat_car_card"
+        tools:visibility="visible" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
