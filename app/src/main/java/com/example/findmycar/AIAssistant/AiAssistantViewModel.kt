@@ -3,10 +3,12 @@ package com.example.findmycar.aiassistant
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.findmycar.data.AiMessage
+import com.example.findmycar.data.AiRequest
+import com.example.findmycar.data.AiResponse
 import com.example.findmycar.data.MarketcheckListing
 import com.example.findmycar.data.MarketcheckService
 import com.example.findmycar.data.supabase
-import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.functions.functions
 import io.ktor.client.call.body
 import io.ktor.client.statement.bodyAsText
@@ -28,32 +30,6 @@ data class ChatMessage(
     val isUser: Boolean,
     val timestamp: Long = System.currentTimeMillis(),
     val carListings: List<MarketcheckListing>? = null
-)
-
-@Serializable
-data class AiRequest(val message: String)
-
-@Serializable
-data class AiResponse(
-    val output: List<AiOutput> = emptyList(),
-    val tool_calls: List<AiToolCall>? = null
-)
-
-@Serializable
-data class AiOutput(
-    val content: List<AiContent> = emptyList()
-)
-
-@Serializable
-data class AiContent(
-    val text: String = ""
-)
-
-@Serializable
-data class AiToolCall(
-    val id: String,
-    val name: String,
-    val arguments: String
 )
 
 data class AiAssistantUiState(
@@ -85,67 +61,28 @@ class AiAssistantViewModel : ViewModel() {
 
         viewModelScope.launch {
             try {
-                Log.d("AiAssistantViewModel", "Sending message: $messageText")
-                
+                // Convert UI messages to history format
+                val history = _uiState.value.messages.map {
+                    AiMessage(role = if (it.isUser) "user" else "assistant", content = it.content)
+                }
+
                 val httpResponse = supabase.functions.invoke(
                     function = "openai-chat",
-                    body = AiRequest(message = messageText),
+                    body = AiRequest(messages = history, mode = "general"),
                     headers = headersOf(HttpHeaders.ContentType, "application/json")
                 )
 
-                val rawBody = httpResponse.bodyAsText()
-                Log.d("AiAssistantViewModel", "Raw Response: $rawBody")
-
                 val response = httpResponse.body<AiResponse>()
 
-                if (!response.tool_calls.isNullOrEmpty()) {
-                    handleToolCalls(response.tool_calls)
-                } else {
-                    val aiReplyText = response.output.firstOrNull()?.content?.firstOrNull()?.text 
-                        ?: "AI returned an empty response."
+                val aiReplyText = response.output.firstOrNull()?.content?.firstOrNull()?.text 
+                    ?: "AI returned an empty response."
 
-                    val aiMessage = ChatMessage(content = aiReplyText, isUser = false)
-                    _uiState.update { it.copy(messages = it.messages + aiMessage, isLoading = false) }
-                }
+                val aiMessage = ChatMessage(content = aiReplyText, isUser = false)
+                _uiState.update { it.copy(messages = it.messages + aiMessage, isLoading = false) }
 
             } catch (e: Exception) {
                 Log.e("AiAssistantViewModel", "Error getting AI response", e)
                 _uiState.update { it.copy(isLoading = false, error = e.message ?: "Failed to get AI response") }
-            }
-        }
-    }
-
-    private fun handleToolCalls(toolCalls: List<AiToolCall>) {
-        viewModelScope.launch {
-            try {
-                val toolCall = toolCalls.first()
-                if (toolCall.name == "search_cars") {
-                    val argsJson = json.parseToJsonElement(toolCall.arguments).jsonObject
-                    
-                    val make = argsJson["make"]?.jsonPrimitive?.content
-                    val model = argsJson["model"]?.jsonPrimitive?.content
-                    val zip = argsJson["zip"]?.jsonPrimitive?.content
-                    val radius = argsJson["radius"]?.jsonPrimitive?.content?.toIntOrNull() ?: 50
-
-                    val response = marketcheckService.searchCars(
-                        make = make,
-                        model = model,
-                        zip = zip,
-                        radius = radius
-                    )
-
-                    val aiMessage = ChatMessage(
-                        content = if (response.listings.isNotEmpty()) 
-                            "I found ${response.listings.size} cars matching your search:" 
-                            else "I couldn't find any cars matching those criteria.",
-                        isUser = false,
-                        carListings = response.listings
-                    )
-                    _uiState.update { it.copy(messages = it.messages + aiMessage, isLoading = false) }
-                }
-            } catch (e: Exception) {
-                Log.e("AiAssistantViewModel", "Error handling tool call", e)
-                _uiState.update { it.copy(isLoading = false, error = "Error searching for cars") }
             }
         }
     }

@@ -4,6 +4,9 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.findmycar.aiassistant.ChatMessage
+import com.example.findmycar.data.AiMessage
+import com.example.findmycar.data.AiRequest
+import com.example.findmycar.data.AiResponse
 import com.example.findmycar.data.MarketcheckListing
 import com.example.findmycar.data.MarketcheckService
 import com.example.findmycar.data.supabase
@@ -17,36 +20,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
-
-@Serializable
-data class AiRequest(val message: String)
-
-@Serializable
-data class AiResponse(
-    val output: List<AiOutput> = emptyList(),
-    val tool_calls: List<AiToolCall>? = null
-)
-
-@Serializable
-data class AiOutput(
-    val content: List<AiContent> = emptyList()
-)
-
-@Serializable
-data class AiContent(
-    val text: String = ""
-)
-
-@Serializable
-data class AiToolCall(
-    val id: String,
-    val name: String,
-    val arguments: String
-)
 
 data class InteractiveSearchUiState(
     val messages: List<ChatMessage> = emptyList(),
@@ -68,7 +44,6 @@ class InteractiveSearchViewModel : ViewModel() {
 
     init {
         Log.d(TAG, "ViewModel Initialized")
-        // Initial AI message
         val welcomeMessage = ChatMessage(
             content = "Hi! I'm your interactive car search assistant. Tell me what kind of car you're looking for, or provide a ZIP code to start searching nearby!",
             isUser = false
@@ -92,11 +67,19 @@ class InteractiveSearchViewModel : ViewModel() {
 
         viewModelScope.launch {
             try {
-                Log.d(TAG, "Invoking supabase function 'openai-chat'")
+                // Construct history from previous messages using shared models
+                val history = _uiState.value.messages.map {
+                    AiMessage(
+                        role = if (it.isUser) "user" else "assistant",
+                        content = it.content
+                    )
+                }
+
+                Log.d(TAG, "Invoking supabase function with ${history.size} messages")
                 
                 val httpResponse = supabase.functions.invoke(
                     function = "openai-chat",
-                    body = AiRequest(message = messageText),
+                    body = AiRequest(messages = history, mode = "car_search"),
                     headers = headersOf(HttpHeaders.ContentType, "application/json")
                 )
 
@@ -105,8 +88,7 @@ class InteractiveSearchViewModel : ViewModel() {
                 val response = httpResponse.body<AiResponse>()
 
                 if (!response.tool_calls.isNullOrEmpty()) {
-                    Log.d(TAG, "Tool calls received: ${response.tool_calls}")
-                    handleToolCalls(response.tool_calls)
+                    handleToolCalls(response.tool_calls!!)
                 } else {
                     val aiReplyText = response.output.firstOrNull()?.content?.firstOrNull()?.text 
                         ?: "I'm sorry, I couldn't process that. Try asking about a specific car or location."
@@ -123,7 +105,7 @@ class InteractiveSearchViewModel : ViewModel() {
         }
     }
 
-    private fun handleToolCalls(toolCalls: List<AiToolCall>) {
+    private fun handleToolCalls(toolCalls: List<com.example.findmycar.data.AiToolCall>) {
         viewModelScope.launch {
             try {
                 val toolCall = toolCalls.first()
