@@ -31,6 +31,9 @@
         <action
             android:id="@+id/action_homeFragment_to_carDetailsFragment"
             app:destination="@id/carDetailsFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_interactiveSearchFragment"
+            app:destination="@id/interactiveSearchFragment" />
     </fragment>
 
     <fragment
@@ -63,6 +66,16 @@
         <argument
             android:name="carId"
             app:argType="integer" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/interactiveSearchFragment"
+        android:name="com.example.findmycar.interactivesearch.InteractiveSearchFragment"
+        android:label="Interactive Search"
+        tools:layout="@layout/fragment_interactive_search">
+        <action
+            android:id="@+id/action_interactiveSearchFragment_to_carDetailsFragment"
+            app:destination="@id/carDetailsFragment" />
     </fragment>
 
 </navigation>
