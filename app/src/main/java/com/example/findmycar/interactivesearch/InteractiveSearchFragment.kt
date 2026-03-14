@@ -13,8 +13,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
-import com.example.findmycar.R
 import com.example.findmycar.aiassistant.ChatAdapter
+import com.example.findmycar.data.toCar
 import com.example.findmycar.databinding.FragmentInteractiveSearchBinding
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
@@ -26,10 +26,10 @@ class InteractiveSearchFragment : Fragment() {
 
     private val viewModel: InteractiveSearchViewModel by viewModels()
     private val chatAdapter = ChatAdapter { listing ->
-        val bundle = Bundle().apply {
-            putInt("carId", listing.id.hashCode())
-        }
-        findNavController().navigate(R.id.action_interactiveSearchFragment_to_carDetailsFragment, bundle)
+        // Convert the listing to a Car object and pass it via Safe Args
+        val car = listing.toCar()
+        val action = InteractiveSearchFragmentDirections.actionInteractiveSearchFragmentToCarDetailsFragment(car)
+        findNavController().navigate(action)
     }
 
     override fun onCreateView(

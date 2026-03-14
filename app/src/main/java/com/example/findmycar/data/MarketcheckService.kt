@@ -37,7 +37,6 @@ class MarketcheckService {
         rows: Int = 10
     ): MarketcheckResponse {
         return try {
-            // Using the primary API endpoint domain
             val response = client.get("https://api.marketcheck.com/v2/search/car/active") {
                 header("Accept", "application/json")
                 parameter("api_key", BuildConfig.MARKETCHECK_API_KEY)
@@ -51,19 +50,52 @@ class MarketcheckService {
                 parameter("rows", rows.toString())
                 parameter("start", "0")
                 
-                Log.d(TAG, "Request URL: ${this.url.build()}")
+                Log.d(TAG, "Search Request URL: ${this.url.build()}")
             }
 
             if (response.status.isSuccess()) {
                 response.body()
             } else {
                 val errorBody = response.bodyAsText()
-                Log.e(TAG, "API Error ${response.status}: $errorBody")
+                Log.e(TAG, "Search API Error ${response.status}: $errorBody")
                 MarketcheckResponse()
             }
         } catch (e: Exception) {
-            Log.e(TAG, "Network or Parsing Error: ${e.message}", e)
+            Log.e(TAG, "Search Network or Parsing Error: ${e.message}", e)
             MarketcheckResponse()
+        }
+    }
+
+    suspend fun getCarDetails(carId: String): MarketcheckListing? {
+        return try {
+            // Marketcheck's single listing endpoint structure fix
+            val response = client.get("https://api.marketcheck.com/v2/listing/$carId") {
+                header("Accept", "application/json")
+                parameter("api_key", BuildConfig.MARKETCHECK_API_KEY)
+                Log.d(TAG, "Details Request URL: ${this.url.build()}")
+            }
+
+            if (response.status.isSuccess()) {
+                response.body()
+            } else {
+                // Some plans use /v2/listing/{id}/full
+                Log.d(TAG, "Attempting fallback to /full endpoint")
+                val fallbackResponse = client.get("https://api.marketcheck.com/v2/listing/$carId/full") {
+                    header("Accept", "application/json")
+                    parameter("api_key", BuildConfig.MARKETCHECK_API_KEY)
+                }
+                
+                if (fallbackResponse.status.isSuccess()) {
+                    fallbackResponse.body()
+                } else {
+                    val errorBody = fallbackResponse.bodyAsText()
+                    Log.e(TAG, "Details API Error ${fallbackResponse.status}: $errorBody")
+                    null
+                }
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Details Network or Parsing Error: ${e.message}", e)
+            null
         }
     }
 }

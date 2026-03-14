@@ -53,7 +53,7 @@ data class MarketcheckDealer(
  */
 fun MarketcheckListing.toCar(): Car {
     return Car(
-        id = id.hashCode(), // Simplified for now
+        id = id,
         make = build?.make ?: "",
         model = build?.model ?: "",
         year = build?.year ?: 0,

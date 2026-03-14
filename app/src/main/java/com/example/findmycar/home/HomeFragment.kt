@@ -48,13 +48,6 @@ class HomeFragment : Fragment() {
         binding.buttonInteractiveSearch.setOnClickListener {
             findNavController().navigate(R.id.action_homeFragment_to_interactiveSearchFragment)
         }
-
-        binding.buttonCarViewTest.setOnClickListener {
-            val bundle = Bundle().apply {
-                putInt("carId", 123) // Passing a mock ID
-            }
-            findNavController().navigate(R.id.action_homeFragment_to_carDetailsFragment, bundle)
-        }
     }
 
     override fun onStart() {

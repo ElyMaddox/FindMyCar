@@ -64,8 +64,8 @@
         android:label="Car Details"
         tools:layout="@layout/fragment_car_details">
         <argument
-            android:name="carId"
-            app:argType="integer" />
+            android:name="car"
+            app:argType="com.example.findmycar.data.Car" />
     </fragment>
 
     <fragment

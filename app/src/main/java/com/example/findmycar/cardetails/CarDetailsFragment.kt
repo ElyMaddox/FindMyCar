@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -13,6 +12,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.findmycar.R
+import com.example.findmycar.data.Car
 import com.example.findmycar.databinding.FragmentCarDetailsBinding
 import kotlinx.coroutines.launch
 
@@ -40,7 +40,8 @@ class CarDetailsFragment : Fragment() {
         setupRecyclerView()
         observeUiState()
 
-        viewModel.loadCarDetails(args.carId)
+        // Set the car data in the ViewModel immediately from the navigation arguments
+        viewModel.setCar(args.car)
     }
 
     private fun setupRecyclerView() {
@@ -54,24 +55,26 @@ class CarDetailsFragment : Fragment() {
                 viewModel.uiState.collect { state ->
                     when (state) {
                         is CarDetailsUiState.Loading -> {
-                            // Show loading if needed
+                            // Initial state, nothing to show yet
                         }
                         is CarDetailsUiState.Success -> {
-                            val car = state.car
-                            binding.textViewCarName.text = getString(R.string.car_name_format, car.year, car.make, car.model)
-                            binding.textViewCarPrice.text = getString(R.string.price_format, car.price)
-                            binding.textViewDescription.text = car.description
-                            adapter.submitList(car.toDetailList())
-                            
-                            // Load image here if we had Glide/Coil
+                            displayCarDetails(state.car)
                         }
                         is CarDetailsUiState.Error -> {
-                            Toast.makeText(context, state.message, Toast.LENGTH_SHORT).show()
+                            // Handle potential errors if needed
                         }
                     }
                 }
             }
         }
+    }
+
+    private fun displayCarDetails(car: Car) {
+        binding.textViewCarName.text = getString(R.string.car_name_format, car.year, car.make, car.model)
+        binding.textViewCarPrice.text = getString(R.string.price_format, car.price)
+        binding.textViewDescription.text = car.description
+        adapter.submitList(car.toDetailList())
+        // Image loading with Coil/Glide would go here
     }
 
     override fun onDestroyView() {

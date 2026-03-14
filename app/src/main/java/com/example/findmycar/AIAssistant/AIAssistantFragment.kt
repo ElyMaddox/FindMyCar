@@ -13,7 +13,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
-import com.example.findmycar.R
+import com.example.findmycar.data.toCar
 import com.example.findmycar.databinding.FragmentAiAssistantBinding
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
@@ -25,10 +25,9 @@ class AIAssistantFragment : Fragment() {
 
     private val viewModel: AiAssistantViewModel by viewModels()
     private val chatAdapter = ChatAdapter { listing ->
-        val bundle = Bundle().apply {
-            putInt("carId", listing.id.hashCode())
-        }
-        findNavController().navigate(R.id.action_aiAssistantFragment_to_carDetailsFragment, bundle)
+        val car = listing.toCar()
+        val action = AIAssistantFragmentDirections.actionAiAssistantFragmentToCarDetailsFragment(car)
+        findNavController().navigate(action)
     }
 
     override fun onCreateView(

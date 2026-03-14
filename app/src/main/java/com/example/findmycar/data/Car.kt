@@ -1,15 +1,14 @@
 package com.example.findmycar.data
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
 import java.util.Locale
 
-/**
- * This is temporary, gemini made this rq as a placeholder
- * it might be right though idk
- */
 @Serializable
+@Parcelize
 data class Car(
-    val id: Int? = null,
+    val id: String? = null,
     val make: String = "",
     val model: String = "",
     val year: Int = 0,
@@ -22,7 +21,7 @@ data class Car(
     val color: String = "",
     val description: String = "",
     val imageUrl: String = ""
-) {
+) : Parcelable {
     fun toDetailList(): List<CarDetailItem> {
         return listOf(
             CarDetailItem("Make", make),
@@ -39,6 +38,7 @@ data class Car(
     }
 }
 
+@Serializable
 data class CarDetailItem(
     val label: String,
     val value: String
