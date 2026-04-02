@@ -41,7 +41,12 @@ class ProfileViewModel : ViewModel() {
         }
     }
 
-    fun saveProfile(fullName: Editable?) {
+    fun saveProfile(
+        fullName: Editable?,
+        bodyType: String?,
+        drivetrain: String?,
+        features: List<String>
+    ) {
         val name = fullName?.toString()?.trim()
         if (name.isNullOrBlank()) {
             _uiState.update { it.copy(errorMessage = "Please enter your name.") }
@@ -56,18 +61,22 @@ class ProfileViewModel : ViewModel() {
 
                 val existing = repository.getProfile()
                 val profile = Profile(
-                    id = existing?.id ?: user.id,
+                    id = existing?.id,
                     userId = user.id,
                     fullName = name,
-                    email = user.email ?: "",
-                    createdAt = existing?.createdAt ?: ""
+                    email = user.email,
+                    createdAt = existing?.createdAt,
+                    preferredBodyType = bodyType,
+                    preferredDrivetrain = drivetrain,
+                    features = features
                 )
                 repository.upsertProfile(profile)
 
+                val updatedProfile = repository.getProfile()
+
                 _uiState.update {
-                    it.copy(isLoading = false, profile = profile, successMessage = "Profile saved!")
+                    it.copy(isLoading = false, profile = updatedProfile, successMessage = "Profile saved!")
                 }
-                Log.d("ProfileViewModel", "Profile saved successfully")
             } catch (e: Exception) {
                 Log.e("ProfileViewModel", "Error saving profile", e)
                 _uiState.update { it.copy(isLoading = false, errorMessage = e.message) }

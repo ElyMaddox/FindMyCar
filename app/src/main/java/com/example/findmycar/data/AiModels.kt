@@ -1,5 +1,6 @@
 package com.example.findmycar.data
 
+import com.example.findmycar.data.model.Profile
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -8,7 +9,8 @@ data class AiMessage(val role: String, val content: String)
 @Serializable
 data class AiRequest(
     val messages: List<AiMessage>,
-    val mode: String
+    val mode: String,
+    val user_profile: Profile? = null
 )
 
 @Serializable

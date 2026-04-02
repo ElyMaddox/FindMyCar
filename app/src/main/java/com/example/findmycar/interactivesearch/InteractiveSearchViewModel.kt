@@ -9,6 +9,7 @@ import com.example.findmycar.data.AiRequest
 import com.example.findmycar.data.AiResponse
 import com.example.findmycar.data.MarketcheckListing
 import com.example.findmycar.data.MarketcheckService
+import com.example.findmycar.data.repository.ProfileRepository
 import com.example.findmycar.data.supabase
 import io.github.jan.supabase.functions.functions
 import io.ktor.client.call.body
@@ -40,6 +41,7 @@ class InteractiveSearchViewModel : ViewModel() {
     val uiState: StateFlow<InteractiveSearchUiState> = _uiState.asStateFlow()
 
     private val marketcheckService = MarketcheckService()
+    private val profileRepository = ProfileRepository()
     private val json = Json { ignoreUnknownKeys = true }
 
     init {
@@ -49,12 +51,22 @@ class InteractiveSearchViewModel : ViewModel() {
             isUser = false
         )
         _uiState.update { it.copy(messages = listOf(welcomeMessage)) }
+        
+        // Pre-fetch profile into cache
+        viewModelScope.launch {
+            try {
+                profileRepository.getProfile()
+                Log.d(TAG, "Profile pre-fetched successfully")
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to pre-fetch profile", e)
+            }
+        }
     }
 
     fun sendUserMessage(messageText: String) {
         if (messageText.isBlank()) return
 
-        Log.d(TAG, "sendUserMessage: $messageText")
+        Log.d(TAG, "USER MESSAGE SENT: $messageText")
         val userMessage = ChatMessage(content = messageText, isUser = true)
         
         _uiState.update { currentState ->
@@ -67,6 +79,11 @@ class InteractiveSearchViewModel : ViewModel() {
 
         viewModelScope.launch {
             try {
+                Log.d(TAG, "Starting AI request flow...")
+                // Get cached profile
+                val profile = profileRepository.getProfile()
+                Log.d(TAG, "Using profile for request: ${profile?.fullName ?: "Guest"}")
+
                 // Construct history from previous messages using shared models
                 val history = _uiState.value.messages.map {
                     AiMessage(
@@ -75,32 +92,37 @@ class InteractiveSearchViewModel : ViewModel() {
                     )
                 }
 
-                Log.d(TAG, "Invoking supabase function with ${history.size} messages")
+                Log.d(TAG, "Invoking supabase function 'openai-chat' with ${history.size} messages")
                 
                 val httpResponse = supabase.functions.invoke(
                     function = "openai-chat",
-                    body = AiRequest(messages = history, mode = "car_search"),
+                    body = AiRequest(
+                        messages = history, 
+                        mode = "car_search",
+                        user_profile = profile
+                    ),
                     headers = headersOf(HttpHeaders.ContentType, "application/json")
                 )
 
                 val rawBody = httpResponse.bodyAsText()
-                Log.d(TAG, "Raw Response: $rawBody")
+                Log.d(TAG, "RAW RESPONSE FROM SUPABASE: $rawBody")
                 val response = httpResponse.body<AiResponse>()
 
                 if (!response.tool_calls.isNullOrEmpty()) {
+                    Log.d(TAG, "Function returned tool calls: ${response.tool_calls?.size}")
                     handleToolCalls(response.tool_calls!!)
                 } else {
                     val aiReplyText = response.output.firstOrNull()?.content?.firstOrNull()?.text 
                         ?: "I'm sorry, I couldn't process that. Try asking about a specific car or location."
 
-                    Log.d(TAG, "AI Response: $aiReplyText")
+                    Log.d(TAG, "AI MESSAGE RECEIVED: $aiReplyText")
                     val aiMessage = ChatMessage(content = aiReplyText, isUser = false)
                     _uiState.update { it.copy(messages = it.messages + aiMessage, isLoading = false) }
                 }
 
             } catch (e: Exception) {
-                Log.e(TAG, "Error getting AI response", e)
-                _uiState.update { it.copy(isLoading = false, error = "Failed to connect to the assistant.") }
+                Log.e(TAG, "CRITICAL ERROR getting AI response", e)
+                _uiState.update { it.copy(isLoading = false, error = "Failed to connect to the assistant: ${e.message}") }
             }
         }
     }
@@ -109,7 +131,7 @@ class InteractiveSearchViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 val toolCall = toolCalls.first()
-                Log.d(TAG, "Handling Tool Call: ${toolCall.name} with args: ${toolCall.arguments}")
+                Log.d(TAG, "Executing tool call: ${toolCall.name}")
                 if (toolCall.name == "search_cars") {
                     val argsJson = json.parseToJsonElement(toolCall.arguments).jsonObject
                     
@@ -119,7 +141,7 @@ class InteractiveSearchViewModel : ViewModel() {
                     val zip = argsJson["zip"]?.jsonPrimitive?.content
                     val radius = argsJson["radius"]?.jsonPrimitive?.content?.toIntOrNull() ?: 50
 
-                    Log.d(TAG, "Searching Marketcheck: make=$make, model=$model, year=$year, zip=$zip, radius=$radius")
+                    Log.d(TAG, "Marketcheck API Search Parameters: make=$make, model=$model, zip=$zip")
                     val response = marketcheckService.searchCars(
                         make = make,
                         model = model,
@@ -128,7 +150,7 @@ class InteractiveSearchViewModel : ViewModel() {
                         radius = radius
                     )
 
-                    Log.d(TAG, "Marketcheck found ${response.listings.size} listings")
+                    Log.d(TAG, "Marketcheck API Results: Found ${response.listings.size} cars")
                     val aiMessage = ChatMessage(
                         content = if (response.listings.isNotEmpty()) 
                             "I found ${response.listings.size} matching cars for you:" 
@@ -139,8 +161,8 @@ class InteractiveSearchViewModel : ViewModel() {
                     _uiState.update { it.copy(messages = it.messages + aiMessage, isLoading = false) }
                 }
             } catch (e: Exception) {
-                Log.e(TAG, "Error handling tool call", e)
-                _uiState.update { it.copy(isLoading = false, error = "Error searching for cars") }
+                Log.e(TAG, "Error in handleToolCalls", e)
+                _uiState.update { it.copy(isLoading = false, error = "Error searching for cars: ${e.message}") }
             }
         }
     }

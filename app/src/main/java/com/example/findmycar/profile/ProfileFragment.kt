@@ -1,17 +1,20 @@
 package com.example.findmycar.profile
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.example.findmycar.R
 import com.example.findmycar.databinding.FragmentProfileBinding
-import com.example.findmycar.login.LoginViewModel
-import kotlin.getValue
+import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.launch
 
 class ProfileFragment : Fragment() {
 
@@ -20,81 +23,82 @@ class ProfileFragment : Fragment() {
 
     private val viewModel: ProfileViewModel by viewModels()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        Log.d(javaClass.simpleName, "Start onCreate")
-        super.onCreate(savedInstanceState)
-
-        Log.d(javaClass.simpleName, "End onCreate")
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        Log.d(javaClass.simpleName, "Start onCreateView")
-
         _binding = FragmentProfileBinding.inflate(inflater, container, false)
-
-        Log.d(javaClass.simpleName, "End onCreateView")
         return binding.root
     }
 
-    override fun onDestroyView() {
-        Log.d(javaClass.simpleName, "Start onDestroyView")
-        super.onDestroyView()
-        _binding = null
-
-        Log.d(javaClass.simpleName, "End onDestroyView")
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        Log.d(javaClass.simpleName, "Start onViewCreated")
         super.onViewCreated(view, savedInstanceState)
 
+        setupDropdowns()
+
         binding.buttonSaveProfile.setOnClickListener {
-            viewModel.saveProfile(binding.editTextFullName.text)
+            viewModel.saveProfile(
+                fullName = binding.editTextFullName.text,
+                bodyType = binding.autoCompleteBodyType.text.toString(),
+                drivetrain = binding.autoCompleteDrivetrain.text.toString(),
+                features = viewModel.uiState.value.profile?.features ?: emptyList()
+            )
         }
 
         binding.buttonBackToWelcome.setOnClickListener {
             findNavController().navigate(R.id.action_profileFragment_to_loginFragment)
         }
 
-        Log.d(javaClass.simpleName, "End onViewCreated")
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uiState.collect { state ->
+                    binding.progressBar.visibility = if (state.isLoading) View.VISIBLE else View.GONE
+                    
+                    state.profile?.let { profile ->
+                        if (binding.editTextFullName.text.isNullOrEmpty()) {
+                            binding.editTextFullName.setText(profile.fullName)
+                        }
+
+                        binding.textViewEmail.text = profile.email
+                        
+                        // Set dropdown values if not already set by user
+                        if (binding.autoCompleteBodyType.text.isNullOrEmpty() && profile.preferredBodyType != null) {
+                            binding.autoCompleteBodyType.setText(profile.preferredBodyType, false)
+                        }
+                        if (binding.autoCompleteDrivetrain.text.isNullOrEmpty() && profile.preferredDrivetrain != null) {
+                            binding.autoCompleteDrivetrain.setText(profile.preferredDrivetrain, false)
+                        }
+                    }
+
+                    state.successMessage?.let {
+                        Snackbar.make(binding.root, it, Snackbar.LENGTH_LONG).show()
+                        viewModel.onSuccessMessageShown()
+                    }
+
+                    state.errorMessage?.let {
+                        Snackbar.make(binding.root, it, Snackbar.LENGTH_LONG).show()
+                        viewModel.onErrorMessageShown()
+                    }
+                }
+            }
+        }
+
+        viewModel.loadProfile()
     }
 
-    override fun onStart() {
-        Log.d(javaClass.simpleName, "Start onStart")
-        super.onStart()
+    private fun setupDropdowns() {
+        val bodyTypes = arrayOf("Sedan", "SUV", "Truck", "Coupe", "Hatchback", "Convertible")
+        val bodyTypeAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, bodyTypes)
+        binding.autoCompleteBodyType.setAdapter(bodyTypeAdapter)
 
-        Log.d(javaClass.simpleName, "End onStart")
+        val drivetrains = arrayOf("FWD", "RWD", "AWD", "4WD")
+        val drivetrainAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, drivetrains)
+        binding.autoCompleteDrivetrain.setAdapter(drivetrainAdapter)
     }
 
-    override fun onResume() {
-        Log.d(javaClass.simpleName, "Start onResume")
-        super.onResume()
-
-        Log.d(javaClass.simpleName, "End onResume")
-    }
-
-    override fun onPause() {
-        Log.d(javaClass.simpleName, "Start onPause")
-        super.onPause()
-
-        Log.d(javaClass.simpleName, "End onPause")
-    }
-
-    override fun onStop() {
-        Log.d(javaClass.simpleName, "Start onStop")
-        super.onStop()
-
-        Log.d(javaClass.simpleName, "End onStop")
-    }
-
-    override fun onDestroy() {
-        Log.d(javaClass.simpleName, "Start onDestroy")
-        super.onDestroy()
-
-        Log.d(javaClass.simpleName, "End onDestroy")
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

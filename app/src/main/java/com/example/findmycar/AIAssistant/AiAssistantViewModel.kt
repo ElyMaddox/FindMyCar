@@ -8,6 +8,7 @@ import com.example.findmycar.data.AiRequest
 import com.example.findmycar.data.AiResponse
 import com.example.findmycar.data.MarketcheckListing
 import com.example.findmycar.data.MarketcheckService
+import com.example.findmycar.data.repository.ProfileRepository
 import com.example.findmycar.data.supabase
 import io.github.jan.supabase.functions.functions
 import io.ktor.client.call.body
@@ -40,15 +41,33 @@ data class AiAssistantUiState(
 
 class AiAssistantViewModel : ViewModel() {
 
+    companion object {
+        private const val TAG = "AiAssistantVM"
+    }
+
     private val _uiState = MutableStateFlow(AiAssistantUiState())
     val uiState: StateFlow<AiAssistantUiState> = _uiState.asStateFlow()
     
     private val marketcheckService = MarketcheckService()
+    private val profileRepository = ProfileRepository()
     private val json = Json { ignoreUnknownKeys = true }
+
+    init {
+        // Pre-fetch profile into cache
+        viewModelScope.launch {
+            try {
+                profileRepository.getProfile()
+                Log.d(TAG, "Profile pre-fetched successfully")
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to pre-fetch profile", e)
+            }
+        }
+    }
 
     fun sendUserMessage(messageText: String) {
         if (messageText.isBlank()) return
 
+        Log.d(TAG, "USER MESSAGE SENT: $messageText")
         val userMessage = ChatMessage(content = messageText, isUser = true)
         
         _uiState.update { currentState ->
@@ -61,27 +80,41 @@ class AiAssistantViewModel : ViewModel() {
 
         viewModelScope.launch {
             try {
+                Log.d(TAG, "Starting AI request flow...")
+                // Get cached profile
+                val profile = profileRepository.getProfile()
+                Log.d(TAG, "Using profile for request: ${profile?.fullName ?: "Guest"}")
+
                 // Convert UI messages to history format
                 val history = _uiState.value.messages.map {
                     AiMessage(role = if (it.isUser) "user" else "assistant", content = it.content)
                 }
 
+                Log.d(TAG, "Invoking supabase function 'openai-chat' with ${history.size} messages")
+                
                 val httpResponse = supabase.functions.invoke(
                     function = "openai-chat",
-                    body = AiRequest(messages = history, mode = "general"),
+                    body = AiRequest(
+                        messages = history, 
+                        mode = "general",
+                        user_profile = profile
+                    ),
                     headers = headersOf(HttpHeaders.ContentType, "application/json")
                 )
 
+                val rawBody = httpResponse.bodyAsText()
+                Log.d(TAG, "RAW RESPONSE FROM SUPABASE: $rawBody")
                 val response = httpResponse.body<AiResponse>()
 
                 val aiReplyText = response.output.firstOrNull()?.content?.firstOrNull()?.text 
                     ?: "AI returned an empty response."
 
+                Log.d(TAG, "AI MESSAGE RECEIVED: $aiReplyText")
                 val aiMessage = ChatMessage(content = aiReplyText, isUser = false)
                 _uiState.update { it.copy(messages = it.messages + aiMessage, isLoading = false) }
 
             } catch (e: Exception) {
-                Log.e("AiAssistantViewModel", "Error getting AI response", e)
+                Log.e(TAG, "CRITICAL ERROR getting AI response", e)
                 _uiState.update { it.copy(isLoading = false, error = e.message ?: "Failed to get AI response") }
             }
         }
