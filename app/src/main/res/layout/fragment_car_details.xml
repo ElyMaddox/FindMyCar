@@ -79,5 +79,17 @@
             app:layout_constraintTop_toBottomOf="@id/textView_description_label"
             tools:text="This is a great car with many features..." />
 
+        <Button
+            android:id="@+id/button_compare"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/compare_button"
+            app:icon="@android:drawable/ic_menu_sort_by_size"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/textView_description" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>

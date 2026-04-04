@@ -28,6 +28,9 @@
     <string name="price_format">$%,.2f</string>
     <string name="car_name_format">%1$d %2$s %3$s</string>
     <string name="view_details">View Details</string>
+    <string name="compare_button">Compare</string>
+    <string name="compare_cars_button">Compare Cars</string>
+    <string name="compare_clear_button">Clear Comparison</string>
 
     <string name="lorem_ipsum">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam in scelerisque sem. Mauris

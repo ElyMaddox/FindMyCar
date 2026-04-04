@@ -6,9 +6,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.example.findmycar.R
+import com.example.findmycar.compare.CompareSharedViewModel
 import com.example.findmycar.databinding.FragmentHomeBinding
+import kotlinx.coroutines.launch
 
 class HomeFragment : Fragment() {
 
@@ -18,6 +24,8 @@ class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
+
+    private val compareSharedViewModel: CompareSharedViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,6 +55,24 @@ class HomeFragment : Fragment() {
 
         binding.buttonInteractiveSearch.setOnClickListener {
             findNavController().navigate(R.id.action_homeFragment_to_interactiveSearchFragment)
+        }
+
+        binding.buttonCompareCars.setOnClickListener {
+            val state = compareSharedViewModel.selectionState.value
+            if (state.car1 != null && state.car2 != null) {
+                val action = HomeFragmentDirections.actionHomeFragmentToCompareFragment(
+                    state.car1, state.car2
+                )
+                findNavController().navigate(action)
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                compareSharedViewModel.selectionState.collect { state ->
+                    binding.buttonCompareCars.isEnabled = state.selectedCount == 2
+                }
+            }
         }
     }
 

@@ -34,6 +34,9 @@
         <action
             android:id="@+id/action_homeFragment_to_interactiveSearchFragment"
             app:destination="@id/interactiveSearchFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_compareFragment"
+            app:destination="@id/compareFragment" />
     </fragment>
 
     <fragment
@@ -65,6 +68,22 @@
         tools:layout="@layout/fragment_car_details">
         <argument
             android:name="car"
+            app:argType="com.example.findmycar.data.Car" />
+        <action
+            android:id="@+id/action_carDetailsFragment_to_compareFragment"
+            app:destination="@id/compareFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/compareFragment"
+        android:name="com.example.findmycar.compare.CompareFragment"
+        android:label="Compare Cars"
+        tools:layout="@layout/fragment_compare">
+        <argument
+            android:name="car1"
+            app:argType="com.example.findmycar.data.Car" />
+        <argument
+            android:name="car2"
             app:argType="com.example.findmycar.data.Car" />
     </fragment>
 
