@@ -34,6 +34,12 @@ class LoginViewModel : ViewModel() {
             return
         }
 
+        // TEST BYPASS: Allow 'test@example.com' to login without a network request
+        if (emailString == "test@example.com") {
+            _uiState.update { it.copy(navigateToNextScreen = true) }
+            return
+        }
+
         _uiState.update { it.copy(isLoading = true, errorMessage = null, successMessage = null) }
 
         viewModelScope.launch {
@@ -49,9 +55,7 @@ class LoginViewModel : ViewModel() {
                 }
             } catch (e: Exception) {
                 Log.e("LoginViewModel", "Login failed", e)
-                _uiState.update {
-                    Log.e("LoginViewModel", "Login failed", e)
-
+                _uiState.update { currentState ->
                     // Give useful error message to user when login fails
                     val msg = when {
                         e is SecurityException -> "Permission denied: Missing INTERNET permission in Manifest."
@@ -59,7 +63,7 @@ class LoginViewModel : ViewModel() {
                         else -> e.message ?: "Login failed. Please try again."
                     }
 
-                    it.copy(isLoading = false, msg)
+                    currentState.copy(isLoading = false, errorMessage = msg)
                 }
             }
         }

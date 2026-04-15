@@ -108,9 +108,10 @@ class InteractiveSearchViewModel : ViewModel() {
                 Log.d(TAG, "RAW RESPONSE FROM SUPABASE: $rawBody")
                 val response = httpResponse.body<AiResponse>()
 
-                if (!response.tool_calls.isNullOrEmpty()) {
-                    Log.d(TAG, "Function returned tool calls: ${response.tool_calls?.size}")
-                    handleToolCalls(response.tool_calls!!)
+                val toolCalls = response.tool_calls
+                if (!toolCalls.isNullOrEmpty()) {
+                    Log.d(TAG, "Function returned tool calls: ${toolCalls.size}")
+                    handleToolCalls(toolCalls)
                 } else {
                     val aiReplyText = response.output.firstOrNull()?.content?.firstOrNull()?.text 
                         ?: "I'm sorry, I couldn't process that. Try asking about a specific car or location."
