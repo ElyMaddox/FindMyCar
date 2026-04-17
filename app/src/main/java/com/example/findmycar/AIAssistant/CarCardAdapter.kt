@@ -6,6 +6,8 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
+import coil.size.Precision
+import coil.size.ViewSizeResolver
 import com.example.findmycar.R
 import com.example.findmycar.data.MarketcheckListing
 import com.example.findmycar.databinding.ItemChatCarCardBinding
@@ -23,10 +25,19 @@ class CarCardAdapter(private val onCarClick: (MarketcheckListing) -> Unit) :
             
             // Load the first available photo link using Coil
             val imageUrl = listing.media?.photo_links?.firstOrNull()
+            
+            // Optimization: Image Downsampling
+            // By specifying the exact size of the ImageView and setting Precision.EXACT,
+            // Coil will decode the bitmap into the required dimensions instead of loading 
+            // the full high-res source into memory.
             binding.imageViewCar.load(imageUrl) {
                 crossfade(true)
-                placeholder(R.drawable.ic_launcher_foreground) // Use a better placeholder if you have one
+                placeholder(R.drawable.ic_launcher_foreground)
                 error(R.drawable.ic_launcher_background)
+                
+                // Downsampling logic
+                size(ViewSizeResolver(binding.imageViewCar))
+                precision(Precision.EXACT)
             }
             
             binding.buttonViewDetails.setOnClickListener { onCarClick(listing) }

@@ -13,6 +13,9 @@ import com.example.findmycar.data.MarketcheckListing
 class ChatAdapter(private val onCarClick: (MarketcheckListing) -> Unit) : 
     ListAdapter<ChatMessage, ChatAdapter.ChatViewHolder>(ChatDiffCallback()) {
 
+    // Shared pool for nested horizontal car lists to improve memory usage
+    private val viewPool = RecyclerView.RecycledViewPool()
+
     companion object {
         private const val VIEW_TYPE_USER = 1
         private const val VIEW_TYPE_AI = 2
@@ -29,7 +32,7 @@ class ChatAdapter(private val onCarClick: (MarketcheckListing) -> Unit) :
             R.layout.item_chat_ai
         }
         val view = LayoutInflater.from(parent.context).inflate(layout, parent, false)
-        return ChatViewHolder(view, onCarClick)
+        return ChatViewHolder(view, onCarClick, viewPool)
     }
 
     override fun onBindViewHolder(holder: ChatViewHolder, position: Int) {
@@ -38,11 +41,29 @@ class ChatAdapter(private val onCarClick: (MarketcheckListing) -> Unit) :
 
     class ChatViewHolder(
         itemView: View, 
-        private val onCarClick: (MarketcheckListing) -> Unit
+        private val onCarClick: (MarketcheckListing) -> Unit,
+        private val sharedPool: RecyclerView.RecycledViewPool
     ) : RecyclerView.ViewHolder(itemView) {
         
         private val messageBody: TextView = itemView.findViewById(R.id.textView_message_body)
         private val recyclerViewCars: RecyclerView? = itemView.findViewById(R.id.recyclerView_cars)
+        
+        // Optimize: Initialize adapter once per ViewHolder instead of per bind
+        private val carAdapter by lazy { CarCardAdapter(onCarClick) }
+
+        init {
+            // Setup nested RecyclerView once
+            recyclerViewCars?.apply {
+                layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false).apply {
+                    initialPrefetchItemCount = 4 // Optimization: Prefetch items during scrolling
+                }
+                adapter = carAdapter
+                setRecycledViewPool(sharedPool)
+                setHasFixedSize(true)
+                // Performance: Reduce scroll jitter
+                setItemViewCacheSize(20)
+            }
+        }
 
         fun bind(message: ChatMessage) {
             messageBody.text = message.content
@@ -50,9 +71,6 @@ class ChatAdapter(private val onCarClick: (MarketcheckListing) -> Unit) :
             if (recyclerViewCars != null) {
                 if (!message.carListings.isNullOrEmpty()) {
                     recyclerViewCars.visibility = View.VISIBLE
-                    val carAdapter = CarCardAdapter(onCarClick)
-                    recyclerViewCars.layoutManager = LinearLayoutManager(itemView.context, LinearLayoutManager.HORIZONTAL, false)
-                    recyclerViewCars.adapter = carAdapter
                     carAdapter.submitList(message.carListings)
                 } else {
                     recyclerViewCars.visibility = View.GONE
