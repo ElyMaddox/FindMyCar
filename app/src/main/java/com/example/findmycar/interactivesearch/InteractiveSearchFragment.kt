@@ -1,11 +1,15 @@
 package com.example.findmycar.interactivesearch
 
+import android.Manifest
 import android.content.Context
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -25,8 +29,17 @@ class InteractiveSearchFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val viewModel: InteractiveSearchViewModel by viewModels()
+
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        if (permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true ||
+            permissions[Manifest.permission.ACCESS_COARSE_LOCATION] == true) {
+            // Permission granted
+        }
+    }
+
     private val chatAdapter = ChatAdapter { listing ->
-        // Convert the listing to a Car object and pass it via Safe Args
         val car = listing.toCar()
         val action = InteractiveSearchFragmentDirections.actionInteractiveSearchFragmentToCarDetailsFragment(car)
         findNavController().navigate(action)
@@ -43,6 +56,8 @@ class InteractiveSearchFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        checkLocationPermissions()
 
         binding.recyclerViewChat.adapter = chatAdapter
 
@@ -71,6 +86,23 @@ class InteractiveSearchFragment : Fragment() {
                         Snackbar.make(binding.root, errorMessage, Snackbar.LENGTH_LONG).show()
                     }
                 }
+            }
+        }
+    }
+
+    private fun checkLocationPermissions() {
+        when {
+            ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED -> { }
+            else -> {
+                requestPermissionLauncher.launch(
+                    arrayOf(
+                        Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.ACCESS_COARSE_LOCATION
+                    )
+                )
             }
         }
     }

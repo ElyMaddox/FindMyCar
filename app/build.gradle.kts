@@ -67,6 +67,10 @@ dependencies {
     implementation(libs.androidx.navigation.ui.ktx)
     implementation(libs.androidx.tracing) // Force version for consistent resolution
 
+    // Google Play Services for Location
+    implementation("com.google.android.gms:play-services-location:21.3.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.9.0")
+
     // Supabase
     implementation(platform(libs.supabase.bom))
     implementation(libs.supabase.gotrue)

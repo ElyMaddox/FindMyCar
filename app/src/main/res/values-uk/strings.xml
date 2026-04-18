@@ -1,0 +1,34 @@
+<resources>
+    <string name="app_name">FindMyCar</string>
+    <string name="action_settings">Налаштування</string>
+    <!-- Рядки, що використовуються для фрагментів навігації -->
+    <string name="first_fragment_label">Перший фрагмент</string>
+    <string name="second_fragment_label">Другий фрагмент</string>
+    <string name="profile_fragment_label">Профіль</string>
+    <string name="next">Далі</string>
+    <string name="previous">Назад</string>
+
+    <string name="login_title">Увійти</string>
+    <string name="username_hint">Електронна пошта</string>
+    <string name="password_hint">Пароль</string>
+    <string name="login_button">Увійти</string>
+    <string name="signup_button">Створити обліковий запис</string>
+
+    <string name="profile_title">Профіль</string>
+    <string name="full_name_hint">Повне ім\'я</string>
+    <string name="save_profile_button">Зберегти профіль</string>
+    <string name="back_to_welcome_button">Вийти</string>
+
+    <string name="ai_hint">Запитайте асистента...</string>
+    <string name="send_message_content_description">Надіслати повідомлення</string>
+
+    <string name="car_details_title">Деталі автомобіля</string>
+    <string name="car_description_label">Опис</string>
+    <string name="car_image_content_description">Зображення автомобіля</string>
+    <string name="price_format">$%,.2f</string>
+    <string name="car_name_format">%1$d %2$s %3$s</string>
+    <string name="view_details">Детальніше</string>
+    <string name="compare_button">Порівняти</string>
+    <string name="compare_cars_button">Порівняти автомобілі</string>
+    <string name="compare_clear_button">Очистити порівняння</string>
+</resources>
