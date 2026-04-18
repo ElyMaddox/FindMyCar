@@ -19,23 +19,29 @@ class CarCardAdapter(private val onCarClick: (MarketcheckListing) -> Unit) :
     class ViewHolder(private val binding: ItemChatCarCardBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(listing: MarketcheckListing, onCarClick: (MarketcheckListing) -> Unit) {
+            val formattedPrice = String.format(Locale.US, "$%,.0f", listing.price)
+            val location = listing.dealer?.let { "${it.city}, ${it.state}" } ?: "Location N/A"
+            
             binding.textViewCarName.text = listing.heading
-            binding.textViewCarPrice.text = String.format(Locale.US, "$%,.0f", listing.price)
-            binding.textViewCarLocation.text = listing.dealer?.let { "${it.city}, ${it.state}" } ?: "Location N/A"
+            binding.textViewCarPrice.text = formattedPrice
+            binding.textViewCarLocation.text = location
             
-            // Load the first available photo link using Coil
+            // Advanced Accessibility: Dynamic Content Description
+            // This provides screen reader users with specific details about the car
+            // rather than a generic "Image of the car" message.
+            binding.imageViewCar.contentDescription = itemView.context.getString(
+                R.string.car_card_content_description,
+                listing.heading,
+                formattedPrice,
+                location
+            )
+            
+            // Load image with downsampling optimization
             val imageUrl = listing.media?.photo_links?.firstOrNull()
-            
-            // Optimization: Image Downsampling
-            // By specifying the exact size of the ImageView and setting Precision.EXACT,
-            // Coil will decode the bitmap into the required dimensions instead of loading 
-            // the full high-res source into memory.
             binding.imageViewCar.load(imageUrl) {
                 crossfade(true)
                 placeholder(R.drawable.ic_launcher_foreground)
                 error(R.drawable.ic_launcher_background)
-                
-                // Downsampling logic
                 size(ViewSizeResolver(binding.imageViewCar))
                 precision(Precision.EXACT)
             }

@@ -25,6 +25,7 @@
     <string name="car_details_title">Деталі автомобіля</string>
     <string name="car_description_label">Опис</string>
     <string name="car_image_content_description">Зображення автомобіля</string>
+    <string name="car_card_content_description">Зображення %1$s, ціна %2$s, знаходиться в %3$s</string>
     <string name="price_format">$%,.2f</string>
     <string name="car_name_format">%1$d %2$s %3$s</string>
     <string name="view_details">Детальніше</string>
